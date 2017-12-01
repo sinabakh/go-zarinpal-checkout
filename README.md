@@ -1,6 +1,10 @@
 # Zarinpal Checkout
 
+[![GoDoc](https://godoc.org/github.com/sinabakh/go-zarinpal-checkout?status.svg)](https://godoc.org/github.com/sinabakh/go-zarinpal-checkout)
+
 Unofficial [Zarinpal Checkout](https://www.zarinpal.com/) implementation in Golang.
+
+You can read the docs [HERE](https://godoc.org/github.com/sinabakh/go-zarinpal-checkout).
 
 ## Installation
 
