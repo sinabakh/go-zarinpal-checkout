@@ -36,10 +36,10 @@ type paymentRequestResp struct {
 	Authority string
 }
 
-// NewZarrinpal creates a new instance of zarinpal payment
+// NewZarinpal creates a new instance of zarinpal payment
 // gateway with provided configs. It also tries to validate
 // provided configs.
-func NewZarrinpal(merchantID string, sandbox bool) (*Zarinpal, error) {
+func NewZarinpal(merchantID string, sandbox bool) (*Zarinpal, error) {
 	if len(merchantID) != 36 {
 		return nil, errors.New("MerchantID must be 36 characters")
 	}

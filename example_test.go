@@ -6,12 +6,12 @@ import (
 	"github.com/sinabakh/go-zarinpal-checkout"
 )
 
-func ExampleNewZarrinpal() {
-	zarinPay, err := zarinpal.NewZarrinpal("XXXX-XXXX-XXXX-XXXX", false)
+func ExampleNewZarinpal() {
+	zarinPay, err := zarinpal.NewZarinpal("XXXX-XXXX-XXXX-XXXX", false)
 	if err != nil {
 		log.Fatal(err)
 	}
-	zarinPayTest, err := zarinpal.NewZarrinpal("XXXX-XXXX-XXXX-XXXX", true)
+	zarinPayTest, err := zarinpal.NewZarinpal("XXXX-XXXX-XXXX-XXXX", true)
 	if err != nil {
 		log.Fatal(err)
 	}
