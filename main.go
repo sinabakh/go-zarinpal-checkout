@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -34,6 +35,17 @@ type paymentRequestReq struct {
 type paymentRequestResp struct {
 	Status    int
 	Authority string
+}
+
+type paymentVerificationReq struct {
+	MerchantID string
+	Authority  string
+	Amount     int
+}
+
+type paymentVerificationResp struct {
+	Status int
+	RefID  json.Number
 }
 
 // NewZarinpal creates a new instance of zarinpal payment
@@ -93,11 +105,49 @@ func (zarinpal *Zarinpal) NewPaymentRequest(amount int, callbackURL, description
 	if err != nil {
 		return
 	}
+	statusCode = resp.Status
 	if resp.Status == 100 {
 		authority = resp.Authority
 		paymentURL = zarinpal.PaymentEndpoint + resp.Authority
 	} else {
-		statusCode = resp.Status
+		err = errors.New(strconv.Itoa(resp.Status))
+	}
+	return
+}
+
+// PaymentVerification verifies if a payment was done successfully, Authority of the
+// payment request should be passed to this method alongside its Amount in Tomans.
+//
+// If error is not nil, you can check statusCode for
+// specific error handler based on Zarinpal error codes.
+// If statusCode is not 0, it means Zarinpal raised an error
+// on their end and you can check the error code and its reason
+// based on their documentation placed in
+// https://github.com/ZarinPal-Lab/Documentation-PaymentGateway/archive/master.zip
+func (zarinpal *Zarinpal) PaymentVerification(amount int, authority string) (verified bool, refID string, statusCode int, err error) {
+	if amount <= 0 {
+		err = errors.New("amount must be a positive number")
+		return
+	}
+	if authority == "" {
+		err = errors.New("authority should not be empty")
+		return
+	}
+	paymentVerification := paymentVerificationReq{
+		MerchantID: zarinpal.MerchantID,
+		Amount:     amount,
+		Authority:  authority,
+	}
+	var resp paymentVerificationResp
+	err = zarinpal.request("PaymentVerification.json", &paymentVerification, &resp)
+	if err != nil {
+		return
+	}
+	statusCode = resp.Status
+	if resp.Status == 100 {
+		verified = true
+		refID = string(resp.RefID)
+	} else {
 		err = errors.New(strconv.Itoa(resp.Status))
 	}
 	return
@@ -123,9 +173,10 @@ func (zarinpal *Zarinpal) request(method string, data interface{}, res interface
 	if err != nil {
 		return err
 	}
+	log.Println(string(body))
 	err = json.Unmarshal(body, res)
 	if err != nil {
-		err = errors.New("Zarinpal invalid json response")
+		err = errors.New("zarinpal invalid json response")
 		return err
 	}
 	return nil

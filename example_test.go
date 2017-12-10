@@ -20,7 +20,7 @@ func ExampleNewZarinpal() {
 }
 
 func ExampleZarinpal_NewPaymentRequest() {
-	zarinPay, err := zarinpal.NewZarrinpal("XXXX-XXXX-XXXX-XXXX", true)
+	zarinPay, err := zarinpal.NewZarinpal("XXXX-XXXX-XXXX-XXXX", true)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -33,4 +33,20 @@ func ExampleZarinpal_NewPaymentRequest() {
 	}
 	log.Println(authority)  // Save authority in DB
 	log.Println(paymentURL) // Send user to paymentURL
+}
+
+func ExampleZarinpal_PaymentVerification() {
+	zarinPay, err := zarinpal.NewZarinpal("XXXX-XXXX-XXXX-XXXX", true)
+	if err != nil {
+		log.Fatal(err)
+	}
+	authority := "XXXXXXXXX" // Read authority from your storage (DB) or callback request
+	amount := 1000           // The amount of payment in Tomans
+	verified, refID, statusCode, err := zarinPay.PaymentVerification(amount, authority)
+	if err != nil {
+		if statusCode == 101 {
+			log.Println("Payment is already verified")
+		}
+		log.Fatal(err)
+	}
 }
