@@ -48,6 +48,16 @@ type paymentVerificationResp struct {
 	RefID  json.Number
 }
 
+type refreshAuthorityReqBody struct {
+	MerchantID string
+	Authority  string
+	ExpireIn   int
+}
+
+type refreshAuthorityResp struct {
+	Status int
+}
+
 // NewZarinpal creates a new instance of zarinpal payment
 // gateway with provided configs. It also tries to validate
 // provided configs.
@@ -147,6 +157,37 @@ func (zarinpal *Zarinpal) PaymentVerification(amount int, authority string) (ver
 	if resp.Status == 100 {
 		verified = true
 		refID = string(resp.RefID)
+	} else {
+		err = errors.New(strconv.Itoa(resp.Status))
+	}
+	return
+}
+
+func (zarinpal *Zarinpal) RefreshAuthority(authority string, expire int) (statusCode int, err error) {
+	if authority == "" {
+		err = errors.New("authority should not be empty")
+		return
+	}
+	if expire < 1800 {
+		err = errors.New("expire must be at least 1800")
+		return
+	} else if expire > 3888000 {
+		err = errors.New("expire must not be greater than 3888000")
+		return
+	}
+
+	refreshAuthority := refreshAuthorityReqBody{
+		MerchantID: zarinpal.MerchantID,
+		Authority:  authority,
+		ExpireIn:   expire,
+	}
+	var resp refreshAuthorityResp
+	err = zarinpal.request("RefreshAuthority.json", &refreshAuthority, &resp)
+	if err != nil {
+		return
+	}
+	if resp.Status == 100 {
+		statusCode = resp.Status
 	} else {
 		err = errors.New(strconv.Itoa(resp.Status))
 	}
