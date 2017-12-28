@@ -1,6 +1,7 @@
 package zarinpal_test
 
 import (
+	"encoding/json"
 	"log"
 
 	"github.com/sinabakh/go-zarinpal-checkout"
@@ -48,5 +49,31 @@ func ExampleZarinpal_PaymentVerification() {
 			log.Println("Payment is already verified")
 		}
 		log.Fatal(err)
+	}
+}
+
+func ExampleZarinpal_UnverifiedTransactions() {
+	zarinPay, err := zarinpal.NewZarinpal("XXXX-XXXX-XXXX-XXXX", true)
+	if err != nil {
+		log.Fatal(err)
+	}
+	statusCode, authorities, err := zarinPay.UnverifiedTransactions()
+	if err != nil {
+		log.Fatal("statusCode:", statusCode, "error:", err)
+	}
+	marshaledJSON, _ := json.Marshal(authorities)
+	log.Println(string(marshaledJSON))
+	// Output:
+	// [{"Authority":"XXXX","Amount":100,"Channel":"WebGate","CallbackURL":"http://localhost:3000","Referer":"/","Email":"","CellPhone":"","Date":"2017-12-27 22:12:59"}]
+}
+
+func ExampleZarinpal_RefreshAuthority() {
+	zarinPay, err := zarinpal.NewZarinpal("XXXX-XXXX-XXXX-XXXX", true)
+	if err != nil {
+		log.Fatal(err)
+	}
+	statusCode, err := zarinPay.RefreshAuthority("XXXX", 2000)
+	if err != nil {
+		log.Fatal("statusCode:", statusCode, "error:", err)
 	}
 }
