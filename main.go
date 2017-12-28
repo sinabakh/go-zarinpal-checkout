@@ -52,6 +52,7 @@ type unverifiedTransactionsReqBody struct {
 	MerchantID string
 }
 
+// UnverifiedAuthority is the base struct for Authorities in unverifiedTransactionsResp
 type UnverifiedAuthority struct {
 	Authority   string
 	Amount      int
@@ -104,8 +105,8 @@ func NewZarinpal(merchantID string, sandbox bool) (*Zarinpal, error) {
 // email and mobile are optional.
 //
 // If error is not nil, you can check statusCode for
-// specific error handler based on Zarinpal error codes.
-// If statusCode is not 0, it means Zarinpal raised an error
+// specific error handling based on Zarinpal error codes.
+// If statusCode is not 100, it means Zarinpal raised an error
 // on their end and you can check the error code and its reason
 // based on their documentation placed in
 // https://github.com/ZarinPal-Lab/Documentation-PaymentGateway/archive/master.zip
@@ -149,8 +150,8 @@ func (zarinpal *Zarinpal) NewPaymentRequest(amount int, callbackURL, description
 // payment request should be passed to this method alongside its Amount in Tomans.
 //
 // If error is not nil, you can check statusCode for
-// specific error handler based on Zarinpal error codes.
-// If statusCode is not 0, it means Zarinpal raised an error
+// specific error handling based on Zarinpal error codes.
+// If statusCode is not 100, it means Zarinpal raised an error
 // on their end and you can check the error code and its reason
 // based on their documentation placed in
 // https://github.com/ZarinPal-Lab/Documentation-PaymentGateway/archive/master.zip
@@ -183,6 +184,14 @@ func (zarinpal *Zarinpal) PaymentVerification(amount int, authority string) (ver
 	return
 }
 
+// UnverifiedTransactions gets unverified transactions.
+//
+// If error is not nil, you can check statusCode for
+// specific error handling based on Zarinpal error codes.
+// If statusCode is not 100, it means Zarinpal raised an error
+// on their end and you can check the error code and its reason
+// based on their documentation placed in
+// https://github.com/ZarinPal-Lab/Documentation-PaymentGateway/archive/master.zip
 func (zarinpal *Zarinpal) UnverifiedTransactions() (statusCode int, authorities []UnverifiedAuthority, err error) {
 	unverifiedTransactions := unverifiedTransactionsReqBody{
 		MerchantID: zarinpal.MerchantID,
@@ -203,6 +212,15 @@ func (zarinpal *Zarinpal) UnverifiedTransactions() (statusCode int, authorities 
 	return
 }
 
+// RefreshAuthority update authority expiration time.\n
+// expire should be number between [1800,3888000] seconds.
+//
+// If error is not nil, you can check statusCode for
+// specific error handling based on Zarinpal error codes.
+// If statusCode is not 100, it means Zarinpal raised an error
+// on their end and you can check the error code and its reason
+// based on their documentation placed in
+// https://github.com/ZarinPal-Lab/Documentation-PaymentGateway/archive/master.zip
 func (zarinpal *Zarinpal) RefreshAuthority(authority string, expire int) (statusCode int, err error) {
 	if authority == "" {
 		err = errors.New("authority should not be empty")
