@@ -23,7 +23,7 @@ type Zarinpal struct {
 	PaymentEndpoint string
 }
 
-type paymentRequestReq struct {
+type paymentRequestReqBody struct {
 	MerchantID  string
 	Amount      int
 	CallbackURL string
@@ -37,7 +37,7 @@ type paymentRequestResp struct {
 	Authority string
 }
 
-type paymentVerificationReq struct {
+type paymentVerificationReqBody struct {
 	MerchantID string
 	Authority  string
 	Amount     int
@@ -122,7 +122,7 @@ func (zarinpal *Zarinpal) NewPaymentRequest(amount int, callbackURL, description
 		err = errors.New("description should not be empty")
 		return
 	}
-	paymentRequest := paymentRequestReq{
+	paymentRequest := paymentRequestReqBody{
 		MerchantID:  zarinpal.MerchantID,
 		Amount:      amount,
 		CallbackURL: callbackURL,
@@ -163,7 +163,7 @@ func (zarinpal *Zarinpal) PaymentVerification(amount int, authority string) (ver
 		err = errors.New("authority should not be empty")
 		return
 	}
-	paymentVerification := paymentVerificationReq{
+	paymentVerification := paymentVerificationReqBody{
 		MerchantID: zarinpal.MerchantID,
 		Amount:     amount,
 		Authority:  authority,
