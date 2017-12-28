@@ -48,6 +48,26 @@ type paymentVerificationResp struct {
 	RefID  json.Number
 }
 
+type unverifiedTransactionsReqBody struct {
+	MerchantID string
+}
+
+type UnverifiedAuthority struct {
+	Authority   string
+	Amount      int
+	Channel     string
+	CallbackURL string
+	Referer     string
+	Email       string
+	CellPhone   string
+	Date        string // ToDo Check type to be date
+}
+
+type unverifiedTransactionsResp struct {
+	Status      int
+	Authorities []UnverifiedAuthority
+}
+
 type refreshAuthorityReqBody struct {
 	MerchantID string
 	Authority  string
@@ -157,6 +177,26 @@ func (zarinpal *Zarinpal) PaymentVerification(amount int, authority string) (ver
 	if resp.Status == 100 {
 		verified = true
 		refID = string(resp.RefID)
+	} else {
+		err = errors.New(strconv.Itoa(resp.Status))
+	}
+	return
+}
+
+func (zarinpal *Zarinpal) UnverifiedTransactions() (statusCode int, authorities []UnverifiedAuthority, err error) {
+	unverifiedTransactions := unverifiedTransactionsReqBody{
+		MerchantID: zarinpal.MerchantID,
+	}
+
+	var resp unverifiedTransactionsResp
+	err = zarinpal.request("UnverifiedTransactions.json", &unverifiedTransactions, &resp)
+	if err != nil {
+		return
+	}
+
+	if resp.Status == 100 {
+		statusCode = resp.Status
+		authorities = resp.Authorities
 	} else {
 		err = errors.New(strconv.Itoa(resp.Status))
 	}
