@@ -48,8 +48,9 @@ func ExampleZarinpal_PaymentVerification() {
 		if statusCode == 101 {
 			log.Println("Payment is already verified")
 		}
-		log.Fatal(err)
+		log.Fatal("error:", err, "statusCode:", statusCode)
 	}
+	log.Println("verified:", verified, "refID:", refID)
 }
 
 func ExampleZarinpal_UnverifiedTransactions() {
