@@ -192,7 +192,7 @@ func (zarinpal *Zarinpal) PaymentVerification(amount int, authority string) (ver
 // on their end and you can check the error code and its reason
 // based on their documentation placed in
 // https://github.com/ZarinPal-Lab/Documentation-PaymentGateway/archive/master.zip
-func (zarinpal *Zarinpal) UnverifiedTransactions() (statusCode int, authorities []UnverifiedAuthority, err error) {
+func (zarinpal *Zarinpal) UnverifiedTransactions() (authorities []UnverifiedAuthority, statusCode int, err error) {
 	unverifiedTransactions := unverifiedTransactionsReqBody{
 		MerchantID: zarinpal.MerchantID,
 	}
