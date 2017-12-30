@@ -58,7 +58,7 @@ func ExampleZarinpal_UnverifiedTransactions() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	statusCode, authorities, err := zarinPay.UnverifiedTransactions()
+	authorities, statusCode, err := zarinPay.UnverifiedTransactions()
 	if err != nil {
 		log.Fatal("statusCode:", statusCode, "error:", err)
 	}
