@@ -86,10 +86,10 @@ func NewZarinpal(merchantID string, sandbox bool) (*Zarinpal, error) {
 	if len(merchantID) != 36 {
 		return nil, errors.New("MerchantID must be 36 characters")
 	}
-	apiEndPoint := "https://www.zarinpal.com/pg/rest/WebGate/"
+	apiEndPoint := "https://api.zarinpal.com/pg/v4/payment/"
 	paymentEndpoint := "https://www.zarinpal.com/pg/StartPay/"
 	if sandbox == true {
-		apiEndPoint = "https://sandbox.zarinpal.com/pg/rest/WebGate/"
+		apiEndPoint = "https://sandbox.zarinpal.com/pg/v4/payment/"
 		paymentEndpoint = "https://sandbox.zarinpal.com/pg/StartPay/"
 	}
 	return &Zarinpal{
@@ -132,7 +132,7 @@ func (zarinpal *Zarinpal) NewPaymentRequest(amount int, callbackURL, description
 		Mobile:      mobile,
 	}
 	var resp paymentRequestResp
-	err = zarinpal.request("PaymentRequest.json", &paymentRequest, &resp)
+	err = zarinpal.request("request.json", &paymentRequest, &resp)
 	if err != nil {
 		return
 	}
@@ -170,7 +170,7 @@ func (zarinpal *Zarinpal) PaymentVerification(amount int, authority string) (ver
 		Authority:  authority,
 	}
 	var resp paymentVerificationResp
-	err = zarinpal.request("PaymentVerification.json", &paymentVerification, &resp)
+	err = zarinpal.request("verify.json", &paymentVerification, &resp)
 	if err != nil {
 		return
 	}
@@ -198,7 +198,7 @@ func (zarinpal *Zarinpal) UnverifiedTransactions() (authorities []UnverifiedAuth
 	}
 
 	var resp unverifiedTransactionsResp
-	err = zarinpal.request("UnverifiedTransactions.json", &unverifiedTransactions, &resp)
+	err = zarinpal.request("unVerified.json", &unverifiedTransactions, &resp)
 	if err != nil {
 		return
 	}
